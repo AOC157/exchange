@@ -9,8 +9,8 @@ public class Person {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    int id;
-    ArrayList<Product> products;
+    private int id;
+    private ArrayList<Product> products;
 
     public Person(int id, ArrayList<Product> products) {
         this.id = id;
