@@ -1,8 +1,7 @@
 package com.example.exchange.model;
 
-import com.sun.istack.NotNull;
-
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -12,9 +11,9 @@ public class Exchange {
     @Id
     private int id;
     @NotNull
-    private transient Person buyer;
+    private int buyerId;
     @NotNull
-    private transient Person seller;
+    private int sellerId;
     @OneToMany
     @NotNull
     private List<Product> exchangedProducts;
@@ -23,9 +22,9 @@ public class Exchange {
 
     }
 
-    public Exchange(Person buyer, Person seller, List<Product> exchangedProducts) {
-        this.buyer = buyer;
-        this.seller = seller;
+    public Exchange(int buyerId, int sellerId, List<Product> exchangedProducts) {
+        this.buyerId = buyerId;
+        this.sellerId = sellerId;
         this.exchangedProducts = exchangedProducts;
     }
 
@@ -33,20 +32,20 @@ public class Exchange {
         return id;
     }
 
-    public Person getBuyer() {
-        return buyer;
+    public int getBuyerId() {
+        return buyerId;
     }
 
-    public void setBuyer(Person buyer) {
-        this.buyer = buyer;
+    public void setBuyerId(int buyerId) {
+        this.buyerId = buyerId;
     }
 
-    public Person getSeller() {
-        return seller;
+    public int getSellerId() {
+        return sellerId;
     }
 
-    public void setSeller(Person seller) {
-        this.seller = seller;
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
     }
 
     public List<Product> getExchangedProducts() {
