@@ -1,27 +1,33 @@
 package com.example.exchange.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.ArrayList;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
+@Entity
 public class Person {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
-    private ArrayList<Product> products;
+    @OneToMany
+    @NotNull
+    private List<Product> products;
 
-    public Person(int id, ArrayList<Product> products) {
+    public Person(){
+
+    }
+
+    public Person(int id, List<Product> products) {
         this.id = id;
         this.products = products;
     }
 
-    public ArrayList<Product> getProducts() {
+    public List<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(ArrayList<Product> products) {
+    public void setProducts(List<Product> products) {
         this.products = products;
     }
 
