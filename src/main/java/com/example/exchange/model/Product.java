@@ -1,5 +1,7 @@
 package com.example.exchange.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,7 +27,9 @@ public class Product {
     @Min(value = 1)
     private double price;
     @NotNull(message = "date of manufacture cannot be null")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date dateOfManufacture;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date expirationDate;
 
 
