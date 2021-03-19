@@ -26,19 +26,12 @@ public class Product {
     @NotNull(message = "price cannot be null")
     @Min(value = 1)
     private double price;
-    @NotNull(message = "date of manufacture cannot be null")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private Date dateOfManufacture;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private Date expirationDate;
 
 
-    public Product(String name, String color, double price, Date dateOfManufacture, Date expirationDate) {
+    public Product(String name, String color, double price) {
         this.name = name;
         this.color = color;
         this.price = price;
-        this.dateOfManufacture = dateOfManufacture;
-        this.expirationDate = expirationDate;
     }
 
     public Product(){
@@ -46,22 +39,6 @@ public class Product {
 
     public int getId() {
         return id;
-    }
-
-    public Date getDateOfManufacture() {
-        return dateOfManufacture;
-    }
-
-    public void setDateOfManufacture(Date dateOfManufacture) {
-        this.dateOfManufacture = dateOfManufacture;
-    }
-
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
     }
 
     public String getName() {
@@ -95,8 +72,6 @@ public class Product {
                 ", \"name\":\"" + name + '\"' +
                 ", \"color\":\"" + color + '\"' +
                 ", \"price\":" + price +
-                ", \"dateOfManufacture\":\"" + dateOfManufacture + '\"' +
-                ", \"expirationDate\":\"" + expirationDate + "\"" +
                 '}';
     }
 }
