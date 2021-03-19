@@ -19,8 +19,8 @@ public class PersonController {
     public PersonService personService;
 
     @PostMapping(value = "/insert")
-    public void insertPerson(@Valid @RequestBody Person person) {
-        personService.save(person);
+    public Person insertPerson(@Valid @RequestBody Person person) {
+        return personService.save(person);
     }
 
     @GetMapping(value = "/getAll")
