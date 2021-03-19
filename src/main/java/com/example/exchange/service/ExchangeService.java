@@ -26,8 +26,8 @@ public class ExchangeService {
     public Exchange save(Exchange exchange) throws IOException {
         Person buyer = getPerson(exchange.getBuyerId());
         Person seller = getPerson(exchange.getSellerId());
-        
-        seller.getProducts().removeAll(exchange.getExchangedProducts());
+
+        seller.getProducts().remove(0);
         buyer.getProducts().addAll(exchange.getExchangedProducts());
 
         updatePerson(seller);
@@ -54,15 +54,26 @@ public class ExchangeService {
     }
 
     private void updatePerson(Person person) throws IOException {
-        URL url = new URL("http://localhost:8080/person/insert");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type" , "application/json");
-        con.setDoOutput(true);
-        String json = person.toString();
-        try(OutputStream os = con.getOutputStream()){
-            byte[] input = json.getBytes(StandardCharsets.UTF_8);
-            os.write(input,0,input.length);
+        try {
+            URL url = new URL("http://localhost:8080/person/insert");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);
+            con.setDoInput(true);
+            String json = person.toString();
+            OutputStream os = con.getOutputStream();
+            os.write(json.getBytes(StandardCharsets.UTF_8));
+            os.close();
+
+            Reader reader = new BufferedReader(new InputStreamReader(con.getInputStream() , StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder();
+            for (int c; (c = reader.read()) >= 0;){
+                builder.append((char) c);
+            }
+        }
+        catch (Exception exp){
+            exp.printStackTrace();
         }
 
     }
