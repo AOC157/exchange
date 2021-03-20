@@ -7,6 +7,7 @@ import com.example.exchange.repository.ExchangeRepository;
 import com.example.exchange.repository.PersonRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
@@ -29,14 +30,19 @@ public class ExchangeService {
         Person seller = getPerson(exchange.getSellerId());
 
         for(Product product : exchange.getExchangedProducts()){
+            boolean existFlag = false;
             for(Product sellerProduct : seller.getProducts()){
                 if(sellerProduct.getId() == product.getId()){
                     seller.getProducts().remove(sellerProduct);
+                    buyer.getProducts().add(product);
+                    existFlag = true;
                     break;
                 }
             }
+            if(!existFlag){
+                throw new ObjectNotFoundException(product.getId(),"the product not found");
+            }
         }
-        buyer.getProducts().addAll(exchange.getExchangedProducts());
 
         updatePerson(seller);
         updatePerson(buyer);
