@@ -2,6 +2,7 @@ package com.example.exchange.service;
 
 import com.example.exchange.model.Exchange;
 import com.example.exchange.model.Person;
+import com.example.exchange.model.Product;
 import com.example.exchange.repository.ExchangeRepository;
 import com.example.exchange.repository.PersonRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +28,14 @@ public class ExchangeService {
         Person buyer = getPerson(exchange.getBuyerId());
         Person seller = getPerson(exchange.getSellerId());
 
-        seller.getProducts().remove(0);
+        for(Product product : exchange.getExchangedProducts()){
+            for(Product sellerProduct : seller.getProducts()){
+                if(sellerProduct.getId() == product.getId()){
+                    seller.getProducts().remove(sellerProduct);
+                    break;
+                }
+            }
+        }
         buyer.getProducts().addAll(exchange.getExchangedProducts());
 
         updatePerson(seller);
