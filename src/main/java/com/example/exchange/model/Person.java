@@ -11,7 +11,6 @@ public class Person {
     @Id
     private int id;
     @OneToMany
-    @NotNull
     private List<Product> products;
 
     public Person(){
