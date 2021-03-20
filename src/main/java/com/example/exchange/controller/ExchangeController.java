@@ -32,7 +32,7 @@ public class ExchangeController {
     }
 
     @GetMapping(value = "/get/{id}")
-    public String getOneExchange(@PathVariable("id") int id) throws NotFoundException {
+    public String getOneExchange(@PathVariable("id") int id) {
         return exchangeService.get(id).toString();
     }
 }

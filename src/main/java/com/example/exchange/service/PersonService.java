@@ -2,7 +2,7 @@ package com.example.exchange.service;
 
 import com.example.exchange.model.Person;
 import com.example.exchange.repository.PersonRepository;
-import javassist.NotFoundException;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +18,11 @@ public class PersonService {
         return personRepository.save(person);
     }
 
-    public Person get(int id) throws NotFoundException {
+    public Person get(int id) {
         if (personRepository.existsById(id)){
             return personRepository.getOne(id);
         }
-        throw new NotFoundException("");
+        throw new ObjectNotFoundException(id,"the person not found");
     }
 
     public List<Person> getAll(){

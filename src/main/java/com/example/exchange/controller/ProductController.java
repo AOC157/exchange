@@ -30,7 +30,7 @@ public class ProductController {
     }
 
     @GetMapping(value = "/get/{id}")
-    public String getOneProduct(@PathVariable("id") int id) throws NotFoundException {
+    public String getOneProduct(@PathVariable("id") int id) {
         return productService.get(id).toString();
     }
 }

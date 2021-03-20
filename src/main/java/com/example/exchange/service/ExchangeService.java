@@ -4,17 +4,13 @@ import com.example.exchange.model.Exchange;
 import com.example.exchange.model.Person;
 import com.example.exchange.model.Product;
 import com.example.exchange.repository.ExchangeRepository;
-import com.example.exchange.repository.PersonRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javassist.NotFoundException;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -92,11 +88,11 @@ public class ExchangeService {
 
     }
 
-    public Exchange get(int id) throws NotFoundException {
+    public Exchange get(int id) {
         if (exchangeRepository.existsById(id)){
             return exchangeRepository.getOne(id);
         }
-        throw new NotFoundException("");
+        throw new ObjectNotFoundException(id,"the exchange not found");
     }
 
     public List<Exchange> getAll(){
