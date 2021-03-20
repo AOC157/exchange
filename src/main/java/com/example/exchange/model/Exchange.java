@@ -14,7 +14,7 @@ public class Exchange {
     private int buyerId;
     @NotNull
     private int sellerId;
-    @OneToMany
+    @ManyToMany
     @NotNull
     private List<Product> exchangedProducts;
 
