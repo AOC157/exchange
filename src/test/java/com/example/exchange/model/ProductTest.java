@@ -50,7 +50,7 @@ public class ProductTest {
         assert(validator.validate(product).isEmpty());
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void productValidationTest4() {
         Product product = new Product();
         product.setName("cake");
