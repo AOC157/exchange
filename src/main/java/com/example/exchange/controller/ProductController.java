@@ -20,8 +20,8 @@ public class ProductController {
 
 
     @PostMapping(value = "/insert")
-    public void insertProduct(@Valid @RequestBody Product product) {
-        productService.save(product);
+    public Product insertProduct(@Valid @RequestBody Product product) {
+        return productService.save(product);
     }
 
     @GetMapping(value = "/getAll")
