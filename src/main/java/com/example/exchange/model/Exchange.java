@@ -1,6 +1,7 @@
 package com.example.exchange.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class Exchange {
     @NotNull
     private int sellerId;
     @ManyToMany
-    @NotNull
+    @NotEmpty
     private List<Product> exchangedProducts;
 
     public Exchange(){
