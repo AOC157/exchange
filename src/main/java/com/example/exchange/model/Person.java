@@ -17,8 +17,7 @@ public class Person {
 
     }
 
-    public Person(int id, List<Product> products) {
-        this.id = id;
+    public Person(List<Product> products) {
         this.products = products;
     }
 
