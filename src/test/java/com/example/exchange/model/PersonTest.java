@@ -22,27 +22,13 @@ public class PersonTest {
         validator = factory.getValidator();
     }
 
-    @Test(expected = AssertionError.class)
-    public void personValidationTest() {
-        Product product1 = new Product("cake","brown",5000.0);
-        Product product2 = new Product("pen","red",7000.0);
-
-        Person person1 = new Person(Arrays.asList(product1,product2));
-
-        Person person2 = new Person(Collections.singletonList(product1));
-
-        assert(validator.validate(person2).isEmpty());
-    }
-
     @Test
     public void personValidationTest1() {
         Product product1 = new Product("cake","brown",5000.0);
         Product product2 = new Product("pen","red",7000.0);
 
-        Person person1 = new Person(Collections.singletonList(product1));
+        Person person1 = new Person(Arrays.asList(product1,product2));
 
-        Person person2 = new Person(Collections.singletonList(product2));
-
-        assert(validator.validate(person2).isEmpty());
+        assert(validator.validate(person1).isEmpty());
     }
 }
