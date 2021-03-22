@@ -115,8 +115,8 @@ public class PersonControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].products[0].name").value(product1.getName()))
-                .andExpect(jsonPath("$[1].products[0].color").value(product2.getColor()));
+                .andExpect(jsonPath("$[0].products[0].name").value(person1.getProducts().get(0).getName()))
+                .andExpect(jsonPath("$[1].products[0].color").value(person2.getProducts().get(0).getColor()));
     }
 }
 
