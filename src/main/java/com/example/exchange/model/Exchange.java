@@ -56,4 +56,14 @@ public class Exchange {
     public void setExchangedProducts(List<Product> exchangedProducts) {
         this.exchangedProducts = exchangedProducts;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\":" + id +
+                ", \"buyerId\":" + buyerId +
+                ", \"sellerId\":" + sellerId +
+                ", \"exchangedProducts\":" + exchangedProducts +
+                '}';
+    }
 }
