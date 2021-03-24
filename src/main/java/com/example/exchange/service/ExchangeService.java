@@ -1,6 +1,7 @@
 package com.example.exchange.service;
 
 import com.example.exchange.model.Exchange;
+import com.example.exchange.model.ExchangedMoney;
 import com.example.exchange.model.Person;
 import com.example.exchange.model.Product;
 import com.example.exchange.repository.ExchangeRepository;
@@ -25,17 +26,21 @@ public class ExchangeService {
         Person buyer = getPerson(exchange.getBuyerId());
         Person seller = getPerson(exchange.getSellerId());
 
+        double tempExchangedMoney = ExchangedMoney.getStaticMoney();
+
         for(Product product : exchange.getExchangedProducts()){
             boolean existFlag = false;
             for(Product sellerProduct : seller.getProducts()){
                 if(sellerProduct.getId() == product.getId()){
                     seller.getProducts().remove(sellerProduct);
                     buyer.getProducts().add(product);
+                    ExchangedMoney.setStaticMoney(ExchangedMoney.getStaticMoney() + product.getPrice());
                     existFlag = true;
                     break;
                 }
             }
             if(!existFlag){
+                ExchangedMoney.setStaticMoney(tempExchangedMoney);
                 throw new ObjectNotFoundException(product.getId(),"the product not found");
             }
         }
