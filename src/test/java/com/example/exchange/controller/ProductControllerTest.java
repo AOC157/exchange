@@ -1,38 +1,46 @@
 package com.example.exchange.controller;
 
 import com.example.exchange.model.Product;
-import com.example.exchange.service.ProductService;
+import com.example.exchange.repository.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(ProductController.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration
+@SpringBootTest
 public class ProductControllerTest {
 
-    @MockBean
-    private ProductService productService;
 
     @Autowired
+    private ProductRepository productRepository;
+
     private MockMvc mockMvc;
+
+    @Autowired
+    private WebApplicationContext applicationContext;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext).build();
+    }
 
     @Test
     public void insertTest() throws Exception {
@@ -41,60 +49,53 @@ public class ProductControllerTest {
         product.setColor("brown");
         product.setPrice(5000.0);
 
+        Product savedProduct = productRepository.save(product);
+
         ObjectMapper mapper = new ObjectMapper();
         String jsonProduct = mapper.writeValueAsString(product);
 
-        given(productService.save(any(Product.class))).willReturn(product);
-
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/product/insert")
+        mockMvc.perform(MockMvcRequestBuilders.post("/product/insert")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .content(jsonProduct))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        Product resultProduct = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Product.class);
-
-        assertEquals(product.getName(), resultProduct.getName());
+                .andExpect(jsonPath("$.id").value(savedProduct.getId()))
+                .andExpect(jsonPath("$.color").value(savedProduct.getColor()))
+                .andExpect(jsonPath("$.price").value(savedProduct.getPrice()))
+                .andExpect(jsonPath("$.name").value(savedProduct.getName()));
     }
 
     @Test
     public void getTest() throws Exception {
-        Product product = new Product();
-        product.setName("cake");
-        product.setColor("brown");
-        product.setPrice(5000.0);
+        Product savedProduct = productRepository.save(new Product("cake" , "brown" , 5000));
 
-        given(productService.get(product.getId())).willReturn(product);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/product/get/" + product.getId())
+        mockMvc.perform(MockMvcRequestBuilders.get("/product/get/" + savedProduct.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name"). value(product.getName()));
+                .andExpect(jsonPath("$.id"). value(savedProduct.getId()))
+                .andExpect(jsonPath("$.name"). value(savedProduct.getName()))
+                .andExpect(jsonPath("$.color"). value(savedProduct.getColor()))
+                .andExpect(jsonPath("$.price"). value(savedProduct.getPrice()));
     }
 
     @Test
     public void getAllTest() throws Exception {
-        Product product1 = new Product();
-        product1.setName("cake");
-        product1.setColor("brown");
-        product1.setPrice(5000.0);
+        int sizeBeforeSave = productRepository.findAll().size();
 
-        Product product2 = new Product();
-        product2.setName("pen");
-        product2.setColor("red");
-        product2.setPrice(7000.0);
-
-        List<Product> allProducts = Arrays.asList(product1, product2);
-
-        given(productService.getAll()).willReturn(allProducts);
+        Product savedProduct1 = productRepository.save(new Product("cake" ,"brown", 5000));
+        Product savedProduct2 = productRepository.save(new Product("pen" ,"red", 7000));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/product/getAll")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].name").value(product1.getName()))
-                .andExpect(jsonPath("$[1].name").value(product2.getName()));
+                .andExpect(jsonPath("$", hasSize(sizeBeforeSave + 2)))
+                .andExpect(jsonPath("$[" + (savedProduct1.getId() - 1) +"].id").value(savedProduct1.getId()))
+                .andExpect(jsonPath("$[" + (savedProduct1.getId() - 1) +"].color").value(savedProduct1.getColor()))
+                .andExpect(jsonPath("$[" + (savedProduct1.getId() - 1) +"].price").value(savedProduct1.getPrice()))
+                .andExpect(jsonPath("$[" + (savedProduct1.getId() - 1) +"].name").value(savedProduct1.getName()))
+                .andExpect(jsonPath("$[" + (savedProduct2.getId() - 1) +"].id").value(savedProduct2.getId()))
+                .andExpect(jsonPath("$[" + (savedProduct2.getId() - 1) +"].color").value(savedProduct2.getColor()))
+                .andExpect(jsonPath("$[" + (savedProduct2.getId() - 1) +"].price").value(savedProduct2.getPrice()))
+                .andExpect(jsonPath("$[" + (savedProduct2.getId() - 1) +"].name").value(savedProduct2.getName()));
     }
 }
-
