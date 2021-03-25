@@ -1,53 +1,49 @@
 package com.example.exchange.model;
 
-import org.junit.Before;
+import com.example.exchange.repository.ProductRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import javax.validation.ConstraintViolationException;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest
 public class ProductTest {
 
-    private Validator validator;
+    @Autowired
+    private ProductRepository productRepository;
 
-    @Before
-    public void setUp(){
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
-
-    @Test(expected = AssertionError.class)
+    @Test(expected = ConstraintViolationException.class)
     public void productValidationTest1() {
         Product product = new Product();
         product.setName("cake");
         product.setColor("brown");
         product.setPrice(-20);
 
-        assert(validator.validate(product).isEmpty());
+        productRepository.save(product);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = ConstraintViolationException.class)
     public void productValidationTest2() {
         Product product = new Product();
         product.setName("");
         product.setColor("brown");
         product.setPrice(5000);
 
-        assert(validator.validate(product).isEmpty());
+        productRepository.save(product);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = ConstraintViolationException.class)
     public void productValidationTest3() {
         Product product = new Product();
         product.setName("cake");
         product.setColor("");
         product.setPrice(5000);
 
-        assert(validator.validate(product).isEmpty());
+        productRepository.save(product);
     }
 
     @Test
@@ -57,6 +53,6 @@ public class ProductTest {
         product.setColor("brown");
         product.setPrice(5000);
 
-        assert(validator.validate(product).isEmpty());
+        productRepository.save(product);
     }
 }
