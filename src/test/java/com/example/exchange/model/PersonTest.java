@@ -1,34 +1,52 @@
 package com.example.exchange.model;
 
-import org.junit.Before;
+import com.example.exchange.repository.PersonRepository;
+import com.example.exchange.repository.ProductRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.Arrays;
 import java.util.Collections;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest
 public class PersonTest {
 
-    private Validator validator;
+    @Autowired
+    private PersonRepository personRepository;
 
-    @Before
-    public void setUp(){
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     public void personValidationTest1() {
         Product product1 = new Product("cake","brown",5000.0);
+        productRepository.save(product1);
+
         Product product2 = new Product("pen","red",7000.0);
+        productRepository.save(product2);
 
         Person person1 = new Person(Arrays.asList(product1,product2));
 
-        assert(validator.validate(person1).isEmpty());
+        personRepository.save(person1);
+    }
+
+    @Test(expected = DataIntegrityViolationException.class)
+    public void personOneToManyValidationTest2() {
+        Product product1 = new Product("cake","brown",5000.0);
+        productRepository.save(product1);
+
+        Product product2 = new Product("pen","red",7000.0);
+        productRepository.save(product2);
+
+        Person person1 = new Person(Arrays.asList(product1,product2));
+        Person person2 = new Person(Collections.singletonList(product2));
+
+        personRepository.save(person1);
+        personRepository.save(person2);
     }
 }
