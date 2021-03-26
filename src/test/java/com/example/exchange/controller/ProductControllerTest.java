@@ -89,13 +89,13 @@ public class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(sizeBeforeSave + 2)))
-                .andExpect(jsonPath("$[" + (savedProduct1.getId() - 1) +"].id").value(savedProduct1.getId()))
-                .andExpect(jsonPath("$[" + (savedProduct1.getId() - 1) +"].color").value(savedProduct1.getColor()))
-                .andExpect(jsonPath("$[" + (savedProduct1.getId() - 1) +"].price").value(savedProduct1.getPrice()))
-                .andExpect(jsonPath("$[" + (savedProduct1.getId() - 1) +"].name").value(savedProduct1.getName()))
-                .andExpect(jsonPath("$[" + (savedProduct2.getId() - 1) +"].id").value(savedProduct2.getId()))
-                .andExpect(jsonPath("$[" + (savedProduct2.getId() - 1) +"].color").value(savedProduct2.getColor()))
-                .andExpect(jsonPath("$[" + (savedProduct2.getId() - 1) +"].price").value(savedProduct2.getPrice()))
-                .andExpect(jsonPath("$[" + (savedProduct2.getId() - 1) +"].name").value(savedProduct2.getName()));
+                .andExpect(jsonPath("$[" + (sizeBeforeSave) +"].id").value(savedProduct1.getId()))
+                .andExpect(jsonPath("$[" + (sizeBeforeSave) +"].color").value(savedProduct1.getColor()))
+                .andExpect(jsonPath("$[" + (sizeBeforeSave) +"].price").value(savedProduct1.getPrice()))
+                .andExpect(jsonPath("$[" + (sizeBeforeSave) +"].name").value(savedProduct1.getName()))
+                .andExpect(jsonPath("$[" + (sizeBeforeSave + 1) +"].id").value(savedProduct2.getId()))
+                .andExpect(jsonPath("$[" + (sizeBeforeSave + 1) +"].color").value(savedProduct2.getColor()))
+                .andExpect(jsonPath("$[" + (sizeBeforeSave + 1) +"].price").value(savedProduct2.getPrice()))
+                .andExpect(jsonPath("$[" + (sizeBeforeSave + 1) +"].name").value(savedProduct2.getName()));
     }
 }
