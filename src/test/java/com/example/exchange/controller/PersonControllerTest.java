@@ -2,60 +2,63 @@ package com.example.exchange.controller;
 
 import com.example.exchange.model.Person;
 import com.example.exchange.model.Product;
-import com.example.exchange.service.PersonService;
+import com.example.exchange.repository.PersonRepository;
+import com.example.exchange.repository.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(PersonController.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
+@Transactional
 public class PersonControllerTest {
 
-    @MockBean
-    private PersonService personService;
+    private MockMvc mockMvc;
 
     @Autowired
-    private MockMvc mockMvc;
+    private WebApplicationContext applicationContext;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private PersonRepository personRepository;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext).build();
+    }
 
     @Test
     public void insertTest() throws Exception {
-        Product product1 = new Product();
-        product1.setName("cake");
-        product1.setColor("brown");
-        product1.setPrice(5000.0);
+        Product savedProduct1 = productRepository.save(new Product("cake" ,"brown", 5000));
+        Product savedProduct2 = productRepository.save(new Product("pen" ,"red", 7000));
 
-        Product product2 = new Product();
-        product2.setName("pen");
-        product2.setColor("red");
-        product2.setPrice(7000.0);
-
-        Person person = new Person(Arrays.asList(product1, product2));
+        Person person = new Person(Arrays.asList(savedProduct1,savedProduct2));
 
         ObjectMapper mapper = new ObjectMapper();
         String jsonPerson = mapper.writeValueAsString(person);
-
-        given(personService.save(any(Person.class))).willReturn(person);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/person/insert")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -66,58 +69,48 @@ public class PersonControllerTest {
 
         Person resultPerson = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Person.class);
 
-        assertEquals(person.getProducts().get(0).getName(),resultPerson.getProducts().get(0).getName());
+        assertThat(resultPerson.getProducts().get(0).getId()).isEqualTo(savedProduct1.getId());
+        assertThat(resultPerson.getProducts().get(0).getName()).isEqualTo(savedProduct1.getName());
+        assertThat(resultPerson.getProducts().get(0).getColor()).isEqualTo(savedProduct1.getColor());
+        assertThat(resultPerson.getProducts().get(0).getPrice()).isEqualTo(savedProduct1.getPrice());
+
+        assertThat(resultPerson.getProducts().get(1).getId()).isEqualTo(savedProduct2.getId());
+        assertThat(resultPerson.getProducts().get(1).getName()).isEqualTo(savedProduct2.getName());
+        assertThat(resultPerson.getProducts().get(1).getColor()).isEqualTo(savedProduct2.getColor());
+        assertThat(resultPerson.getProducts().get(1).getPrice()).isEqualTo(savedProduct2.getPrice());
     }
 
     @Test
     public void getTest() throws Exception {
-        Product product1 = new Product();
-        product1.setName("cake");
-        product1.setColor("brown");
-        product1.setPrice(5000.0);
+        Product savedProduct1 = productRepository.save(new Product("cookie" ,"brown", 5000));
+        Product savedProduct2 = productRepository.save(new Product("pen" ,"red", 8000));
 
-        Product product2 = new Product();
-        product2.setName("pen");
-        product2.setColor("red");
-        product2.setPrice(7000.0);
+        Person savedPerson = personRepository.save(new Person(Arrays.asList(savedProduct1,savedProduct2)));
 
-        Person person = new Person(Arrays.asList(product1, product2));
-
-        given(personService.get(any(Integer.class))).willReturn(person);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/person/get/" + person.getId())
+        mockMvc.perform(MockMvcRequestBuilders.get("/person/get/" + savedPerson.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.products[0].name").value(product1.getName()));
+                .andExpect(jsonPath("$.id").value(savedPerson.getId()))
+                .andExpect(jsonPath("$.products[0].name").value(savedPerson.getProducts().get(0).getName()))
+                .andExpect(jsonPath("$.products[0].color").value(savedPerson.getProducts().get(0).getColor()))
+                .andExpect(jsonPath("$.products[1].id").value(savedPerson.getProducts().get(1).getId()))
+                .andExpect(jsonPath("$.products[1].price").value(savedPerson.getProducts().get(1).getPrice()));
     }
 
     @Test
     public void getAllTest() throws Exception {
-        Product product1 = new Product();
-        product1.setName("cake");
-        product1.setColor("brown");
-        product1.setPrice(5000.0);
+        Product savedProduct = productRepository.save(new Product("pencil" ,"black", 3000));
 
-        Product product2 = new Product();
-        product2.setName("pen");
-        product2.setColor("red");
-        product2.setPrice(7000.0);
+        Person savedPerson = personRepository.save(new Person(Collections.singletonList(savedProduct)));
 
-        Person person1 = new Person(Collections.singletonList(product1));
-        Person person2 = new Person(Collections.singletonList(product2));
-
-
-        List<Person> allPeople = Arrays.asList(person1,person2);
-
-        given(personService.getAll()).willReturn(allPeople);
+        int size = personRepository.findAll().size();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/person/getAll")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].products[0].name").value(person1.getProducts().get(0).getName()))
-                .andExpect(jsonPath("$[1].products[0].color").value(person2.getProducts().get(0).getColor()));
+                .andExpect(jsonPath("$", hasSize(size)))
+                .andExpect(jsonPath("$[" + (size - 1) +"].products[0].id").value(savedPerson.getProducts().get(0).getId()))
+                .andExpect(jsonPath("$[" + (size - 1) +"].products[0].name").value(savedPerson.getProducts().get(0).getName()))
+                .andExpect(jsonPath("$[" + (size - 1) +"].products[0].color").value(savedPerson.getProducts().get(0).getColor()));
     }
 }
-
-
