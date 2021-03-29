@@ -51,7 +51,7 @@ public class PersonControllerTest {
     }
 
     @Test
-    public void insertTest() throws Exception {
+    public void insertPersonTest() throws Exception {
         Product savedProduct1 = productRepository.save(new Product("cake" ,"brown", 5000));
         Product savedProduct2 = productRepository.save(new Product("pen" ,"red", 7000));
 
@@ -81,7 +81,7 @@ public class PersonControllerTest {
     }
 
     @Test
-    public void getTest() throws Exception {
+    public void getOnePersonTest() throws Exception {
         Product savedProduct1 = productRepository.save(new Product("cookie" ,"brown", 5000));
         Product savedProduct2 = productRepository.save(new Product("pen" ,"red", 8000));
 
@@ -98,7 +98,7 @@ public class PersonControllerTest {
     }
 
     @Test
-    public void getAllTest() throws Exception {
+    public void getAllPeopleTest() throws Exception {
         Product savedProduct = productRepository.save(new Product("pencil" ,"black", 3000));
 
         Person savedPerson = personRepository.save(new Person(Collections.singletonList(savedProduct)));
