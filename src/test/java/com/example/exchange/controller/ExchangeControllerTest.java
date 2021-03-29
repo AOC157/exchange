@@ -56,7 +56,7 @@ public class ExchangeControllerTest {
     }
 
     @Test
-    public void insertTest() throws Exception {
+    public void insertExchangeTest() throws Exception {
         Product savedProduct1 = productRepository.save(new Product("cake" ,"brown", 5000));
         Product savedProduct2 = productRepository.save(new Product("pen" ,"red", 7000));
 
@@ -89,7 +89,7 @@ public class ExchangeControllerTest {
     }
 
     @Test
-    public void getTest() throws Exception {
+    public void getOneExchangeTest() throws Exception {
         Product savedProduct1 = productRepository.save(new Product("cookie" ,"brown", 5000));
         Product savedProduct2 = productRepository.save(new Product("pencil" ,"black", 7000));
 
@@ -107,7 +107,7 @@ public class ExchangeControllerTest {
     }
 
     @Test
-    public void getAllTest() throws Exception {
+    public void getAllExchangesTest() throws Exception {
 
         Product savedProduct1 = productRepository.save(new Product("ball" ,"yellow", 5000));
         Product savedProduct2 = productRepository.save(new Product("oil" ,"yellow", 37000));
