@@ -43,7 +43,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void insertTest() throws Exception {
+    public void insertProductTest() throws Exception {
         Product product = new Product();
         product.setName("cake");
         product.setColor("brown");
@@ -66,7 +66,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void getTest() throws Exception {
+    public void getOneProductTest() throws Exception {
         Product savedProduct = productRepository.save(new Product("cake" , "brown" , 5000));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/product/get/" + savedProduct.getId())
@@ -79,7 +79,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void getAllTest() throws Exception {
+    public void getAllProductsTest() throws Exception {
         int sizeBeforeSave = productRepository.findAll().size();
 
         Product savedProduct1 = productRepository.save(new Product("cake" ,"brown", 5000));
